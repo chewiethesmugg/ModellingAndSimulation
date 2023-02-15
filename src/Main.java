@@ -32,6 +32,12 @@ public class Main {
 		for(int i=0;i<totalCustomers;i++) {
 			//print the trace
 			if(i<30) {
+				//add events from delayed and future lists
+				String delayed="";
+				String future="";
+				for(int j=0;j<futureEvents.size();j++) {
+					future+=futureEvents.get(i).
+				}
 				String output = currentEventTime +" : "+
 			}
 			
