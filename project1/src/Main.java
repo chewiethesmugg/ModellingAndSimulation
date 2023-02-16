@@ -77,6 +77,7 @@ public class Main {
 				currentEventTime=current.arrivalTime;
 
 				//generate next arrival
+				//only generate new arrival at an arrival event
 				futureEvents.add(new Customer(customersServed+1,currentEventTime+generateArrivalTime(lambda),1));
 				System.out.println("generated next arrival: "+customersServed+1);
 				totalQueue+=(queueLength+server);

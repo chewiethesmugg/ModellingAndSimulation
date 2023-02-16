@@ -25,11 +25,11 @@ public class Customer {
 	public String printData() {
 		//printing arrival event
 		if(this.checkArrival()) {
-			return "|ID "+this.customerId+" : "+this.arrivalTime+" A| ";
+			return "|ID "+this.customerId+" ARR : "+this.arrivalTime+"|";
 		}
 		//printing end of service
 		else{
-			return "|ID "+this.customerId+" : "+this.arrivalTime+" D| ";
+			return "|ID "+this.customerId+" DEP : "+this.arrivalTime+"| ";
 		}
 	}
 	
