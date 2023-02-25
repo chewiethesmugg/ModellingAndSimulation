@@ -60,17 +60,15 @@ public class Main {
 				}
 			}
 
-			//getting current event
 			//get future event
-			if(delayedList.isEmpty()){
-				current = futureList.remove();
-			}else{
-				//check delayed events list first
-				current = delayedList.remove();
-			}
+			current = futureList.remove();
 			currentEventTime=current.arrivalTime;
 			//this is an arrival event
 			if(current.checkArrival()) {
+				//generate next arrival
+				//only generate new arrival at an arrival event
+				futureList.add(new Customer(customersServed+1,currentEventTime+generateArrivalTime(lambda),1));
+
 				//server is free to handle customer
 				queueLength++;
 				if(server==1) {
@@ -87,27 +85,24 @@ public class Main {
 					if(current.finished){
 						delayedList.add(current);
 					}
+					//delayedList.add(current);
 				}
-				//generate next arrival
-				//only generate new arrival at an arrival event
-				futureList.add(new Customer(customersServed+1,currentEventTime+generateArrivalTime(lambda),1));
-			}
 
+			}
 
 			//this is a departure event
 			else {
 				queueLength--;
-				if(queueLength>=0) {
-					currentEventTime=current.arrivalTime;
-					//add this to future events list as a another arrival
-					Customer end = new Customer(current.customerId,currentEventTime+generateEndOfService(mu),0);
-					System.out.println("created END");
+				server=1;
+				if(delayedList.size()>0) {
+					Customer end = delayedList.remove();
+					//add end of service event to futures list
+					futureList.add(new Customer(end.customerId,end.arrivalTime+generateEndOfService(mu),0));
 					end.finished=true;
 					futureList.add(end);
 				}
 				//server is idle
 				else{
-					server=1;
 					//time between current arrival and last departure
 					totalServerIdleTime = totalServerIdleTime + (currentEventTime-lastEventTime);
 				}
