@@ -2,7 +2,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.Queue;
 public class Main {
 	//input parameters
 	public static int totalCustomers = 10000;
@@ -40,7 +39,7 @@ public class Main {
 		futureList.add(new Customer(0,generateArrivalTime(lambda),1));
 		Customer current = futureList.peek();
 		int customersServed =0;
-		while(customersServed<totalCustomers) {
+		while(customersServed<10000) {
 			//printing the trace
 			if(customersServed<30) {
 				//add events from delayed and future lists
@@ -52,7 +51,7 @@ public class Main {
 				for(int j=0;j<delayedList.size();j++) {
 					delayed=delayed+delayedList.get(j).printData();
 				}
-				String output = "TIME:: "+currentEventTime +" FUTURE:: "+future+" DELAYED:: "+delayed;
+				String output = "TIME:: "+currentEventTime +" ::FUTURE:: "+future+" ::DELAYED:: "+delayed;
 				try {
 					outputFile.write(output+"\n");
 				} catch (IOException e) {
@@ -63,17 +62,13 @@ public class Main {
 			//get future event
 			current = futureList.remove();
 			currentEventTime=current.arrivalTime;
+
 			//this is an arrival event
 			if(current.checkArrival()) {
-				//generate next arrival
-				//only generate new arrival at an arrival event
-				futureList.add(new Customer(customersServed+1,currentEventTime+generateArrivalTime(lambda),1));
-
 				//server is free to handle customer
-				queueLength++;
-				if(server==1) {
+				if(server==0) {
 					futureList.add(new Customer(current.customerId,currentEventTime+generateEndOfService(mu),0));
-					server=0;
+					server=1;
 				}
 				//server is busy, new customer gets pushed to delayed queue
 				else {
@@ -81,28 +76,25 @@ public class Main {
 					totalQueue+=(queueLength-1);
 					queueCheck+=1;
 					//event gets added to delayed list
-					//check if customer is not a previous arrival
-					if(current.finished){
-						delayedList.add(current);
-					}
-					//delayedList.add(current);
+					delayedList.add(current);
 				}
-
+				//generate next arrival
+				//only generate new arrival at an arrival event
+				futureList.add(new Customer(customersServed+1,currentEventTime+generateArrivalTime(lambda),1));
 			}
 
 			//this is a departure event
 			else {
 				queueLength--;
-				server=1;
 				if(delayedList.size()>0) {
 					Customer end = delayedList.remove();
 					//add end of service event to futures list
-					futureList.add(new Customer(end.customerId,end.arrivalTime+generateEndOfService(mu),0));
 					end.finished=true;
-					futureList.add(end);
+					futureList.add(new Customer(end.customerId,end.arrivalTime+generateEndOfService(mu),0));
 				}
 				//server is idle
 				else{
+					server=0;
 					//time between current arrival and last departure
 					totalServerIdleTime = totalServerIdleTime + (currentEventTime-lastEventTime);
 				}
@@ -112,7 +104,7 @@ public class Main {
 		}
 		//all customers have been served
 		//return information values here
-		double avgQueueLength = totalQueue/queueCheck;
+		double avgQueueLength = totalQueue/totalCustomers;
 		double avgServerIdle = totalServerIdleTime/currentEventTime;
 		System.out.println("Average Queue Length: "+avgQueueLength);
 		System.out.println("Average Server idle: "+avgServerIdle);

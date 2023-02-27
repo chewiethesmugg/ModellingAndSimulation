@@ -1,0 +1,31 @@
+In a simple M/M/1 queue, customers arrive according to a Poisson process with rate λ,
+and the service time for each customer follows an exponential distribution with rate μ.
+ The queue has a single server, and the service discipline is first-come, first-served (FCFS).
+
+In a delayed events list and future events list implementation of the M/M/1 queue, there are two lists maintained by the system:
+
+Delayed events list: This list contains events that are scheduled to occur in the future, but have not yet occurred.
+For example, if a customer arrives at time t and finds the server busy, the customer will be queued and scheduled for service when the server becomes available.
+The time at which the customer will begin service is added to the delayed events list.
+
+Future events list: This list contains events that are scheduled to occur in the future and have not yet occurred.
+For example, the time at which the next customer will arrive or the time at which the next service completion will occur is added to the future events list.
+
+The implementation of the queue works as follows:
+
+Initialize the system: Set the clock to time zero, and initialize the delayed events list and future events list.
+
+Schedule the first arrival event: Generate the time of the first customer arrival using the Poisson distribution with rate λ. Add this event to the future events list.
+
+Process the next event: Take the next event from the future events list and update the clock to the time of the event.
+If the event is an arrival event, check if the server is busy.
+    If the server is busy, add the arrival event to the delayed events list.
+    If the server is idle, schedule the service completion event by adding the service time to the current time and adding the completion event to the future events list.
+If the event is a completion event, check the delayed events list for the next customer in line.
+    If there are no customers in the delayed events list, set the server to idle.
+    If there are customers in the delayed events list, schedule the next service completion event and remove the customer from the delayed events list.
+
+Repeat step 3 until the simulation time is reached.
+
+This implementation of the M/M/1 queue with delayed events list and future events list allows for efficient simulation of queue behavior and can be used to evaluate queue performance metrics such as average waiting time, queue length, and utilization.
+
